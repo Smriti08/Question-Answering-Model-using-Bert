@@ -1,78 +1,57 @@
-# Question-Answering-Model-using-Bert
-# BERT Question Answering Project
+# BERT Question Answering
 
-This repository contains a BERT-based question answering system, utilizing a pre-trained BERT model to answer questions based on a given passage.
+This repository provides a BERT-based question answering system. It utilizes a pre-trained BERT model to answer questions based on a provided passage.
 
-## Setup
+## Getting Started in Google Colab
 
-### Google Colab Instructions
-
-1. **Clone Repository & Install Dependencies:**
+1. **Clone the Repository and Install Dependencies:**
     ```python
     !git clone https://github.com/your-username/your-repo.git
     %cd your-repo
     !pip install -r requirements.txt
     ```
 
-2. **Mount Google Drive:**
+2. **Open and Run the Notebook:**
+    - Upload `your_notebook.ipynb` to Google Colab.
+    - Mount Google Drive for accessing any required files:
     ```python
     from google.colab import drive
     drive.mount('/content/drive')
     ```
 
-3. **Open & Run Notebook:**
-    - Upload and open `your_notebook.ipynb` in Colab.
-    - Run all cells.
+## Usage
 
-## Usage Example
+1. **Load the Model:**
+    ```python
+    from transformers import BertForQuestionAnswering, BertTokenizer
+    import torch
 
-```python
-from transformers import BertForQuestionAnswering, BertTokenizer
-import torch
-import numpy as np
+    model = BertForQuestionAnswering.from_pretrained('bert-large-uncased-whole-word-masking-finetuned-squad')
+    tokenizer = BertTokenizer.from_pretrained('bert-large-uncased-whole-word-masking-finetuned-squad')
+    ```
 
-# Load model and tokenizer
-model = BertForQuestionAnswering.from_pretrained('bert-large-uncased-whole-word-masking-finetuned-squad')
-tokenizer = BertTokenizer.from_pretrained('bert-large-uncased-whole-word-masking-finetuned-squad')
+2. **Ask Questions:**
+    ```python
+    def answer_question(question, passage):
+        inputs = tokenizer.encode_plus(question, passage, return_tensors='pt')
+        answer_start_scores, answer_end_scores = model(**inputs)
+        answer_start = torch.argmax(answer_start_scores)
+        answer_end = torch.argmax(answer_end_scores) + 1
+        answer = tokenizer.convert_tokens_to_string(tokenizer.convert_ids_to_tokens(inputs.input_ids[0][answer_start:answer_end]))
+        return answer
 
-def bert_question_answer(question, passage):
-    input_ids = tokenizer.encode(question, passage, max_length=500, truncation=True)
-    segment_ids = [0 if i <= input_ids.index(102) else 1 for i in range(len(input_ids))]
-    start_scores, end_scores = model(torch.tensor([input_ids]), token_type_ids=torch.tensor([segment_ids]))
-    start, end = torch.argmax(start_scores), torch.argmax(end_scores)
-    answer = tokenizer.convert_tokens_to_string(tokenizer.convert_ids_to_tokens(input_ids[start:end+1]))
-    return answer
+    question = "What is the capital of France?"
+    passage = "Paris is the capital of France."
+    print(answer_question(question, passage))
+    ```
 
-question = "What is the name of the YouTube channel?"
-passage = "Watch complete playlist of Natural Language Processing. Don't forget to like, share and subscribe to my channel IG Tech Team."
-print(bert_question_answer(question, passage))
+## Data
 
-"**Data**"
-Place any required data files in the data/ directory and access them as needed.
+Upload any required data files to the `data/` directory in your Google Drive.
 
-**License**
+## License
 
-### `requirements.txt`
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
-```txt
-transformers==4.12.5
-torch==1.10.0
-numpy==1.21.2
 
-**.gitignore**
-*.pyc
-__pycache__/
-*.ipynb_checkpoints
-venv/
-
-**LICENSE**
-MIT License
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-...
-
+    
