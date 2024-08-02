@@ -1,0 +1,17 @@
+# Transformers library for BERT and other pre-trained models
+transformers==4.32.0
+
+# PyTorch library for deep learning
+torch==2.1.0
+
+# NumPy for numerical operations
+numpy==1.24.4
+
+# Optional: Jupyter notebook support (if running in a Jupyter environment)
+jupyter==1.0.0
+
+# Optional: For better Colab support (if needed)
+colab==1.0.0
+
+# Optional: For handling environment variables
+python-dotenv==1.0.0
